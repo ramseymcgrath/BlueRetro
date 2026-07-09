@@ -16,6 +16,7 @@
 #include "system/delay.h"
 #include "system/fs.h"
 #include "system/led.h"
+#include "system/neopixel.h"
 #include "adapter/adapter.h"
 #include "adapter/adapter_debug.h"
 #include "adapter/config.h"
@@ -129,6 +130,13 @@ static void wl_init_task(void *arg) {
     mc_init();
 
     sys_mgr_init(chip_package);
+#endif
+
+    /* Must run after sys_mgr_init(): it configures the player-LED pins
+     * (incl. GPIO12/15) as GPIO outputs; NeoPixel must claim them last so
+     * led_strip keeps the RMT routing. */
+#ifdef CONFIG_BLUERETRO_NEOPIXEL
+    neopixel_init();
 #endif
 
 #ifdef CONFIG_BLUERETRO_WS_CMDS

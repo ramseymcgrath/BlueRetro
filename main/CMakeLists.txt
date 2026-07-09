@@ -102,6 +102,13 @@ if(CONFIG_BLUERETRO_COVERAGE)
     )
 endif()
 
+if(CONFIG_BLUERETRO_NEOPIXEL)
+    list(APPEND srcs
+        "system/neopixel.c"
+        "system/neopixel_anim.c"
+    )
+endif()
+
 idf_component_register(
     SRCS "${srcs}" "${cov_srcs}"
     PRIV_INCLUDE_DIRS "."

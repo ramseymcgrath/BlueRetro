@@ -97,6 +97,10 @@ void err_led_pulse(void) {
     vTaskResume(err_led_task_hdl);
 }
 
+uint32_t err_led_get(void) {
+    return atomic_test_bit(&led_flags, ERR_LED_SET);
+}
+
 uint32_t err_led_get_pin(void) {
     return err_led_pin;
 }

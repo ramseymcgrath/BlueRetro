@@ -13,6 +13,7 @@ void err_led_cfg_update(void);
 void err_led_set(void);
 void err_led_clear(void);
 void err_led_pulse(void);
+uint32_t err_led_get(void);
 uint32_t err_led_get_pin(void);
 
 #endif /* _LED_H_ */
