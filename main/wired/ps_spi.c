@@ -1054,7 +1054,7 @@ void ps_spi_port_cfg(uint16_t mask) {
         if (mask & 0x1) {
             gpio_config_t io_conf = {
                 .mode = GPIO_MODE_INPUT,
-                .intr_type = GPIO_PIN_INTR_POSEDGE,
+                .intr_type = GPIO_INTR_POSEDGE,
                 .pull_down_en = GPIO_PULLDOWN_DISABLE,
                 .pull_up_en = GPIO_PULLUP_DISABLE,
             };
