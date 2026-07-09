@@ -126,14 +126,17 @@ static void wl_init_task(void *arg) {
         wired_rtos_init();
     }
 
-#ifdef CONFIG_BLUERETRO_NEOPIXEL
-    neopixel_init();
-#endif
-
 #ifndef CONFIG_BLUERETRO_QEMU
     mc_init();
 
     sys_mgr_init(chip_package);
+#endif
+
+    /* Must run after sys_mgr_init(): it configures the player-LED pins
+     * (incl. GPIO12/15) as GPIO outputs; NeoPixel must claim them last so
+     * led_strip keeps the RMT routing. */
+#ifdef CONFIG_BLUERETRO_NEOPIXEL
+    neopixel_init();
 #endif
 
 #ifdef CONFIG_BLUERETRO_WS_CMDS

@@ -11,7 +11,8 @@ menu "BlueRetro"
         depends on BLUERETRO_SYSTEM_PSX_PS2
         default n
         help
-            Drive a single WS2812 "NeoPixel" as an external status indicator.
+            Drive two WS2812 "NeoPixel" LEDs (one per PS2 port) as external
+            status indicators on the former analog-mode LED pins (GPIO12/15).
             PS2-only: other cores contend for the RMT peripheral and GPIOs.
             The on-board error LED is unaffected.
 
