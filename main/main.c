@@ -16,6 +16,7 @@
 #include "system/delay.h"
 #include "system/fs.h"
 #include "system/led.h"
+#include "system/neopixel.h"
 #include "adapter/adapter.h"
 #include "adapter/adapter_debug.h"
 #include "adapter/config.h"
@@ -91,6 +92,10 @@ static void wl_init_task(void *arg) {
 #endif
 
     err_led_init(chip_package);
+
+#ifdef CONFIG_BLUERETRO_NEOPIXEL
+    neopixel_init();
+#endif
 
     core0_stall_init();
 
