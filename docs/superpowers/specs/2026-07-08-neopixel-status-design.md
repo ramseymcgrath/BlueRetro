@@ -165,3 +165,52 @@ hand-rolled).
 
 On spec approval → invoke the `writing-plans` skill to produce the phased
 implementation plan.
+
+---
+
+## Revision 2026-07-09 — Per-port, reuse the analog-mode LED pins
+
+After the single-pixel version was implemented, we pivoted: instead of adding
+one global-status pixel on GPIO4, **drive two WS2812 pixels on the existing
+per-port analog-mode LED pins — GPIO12 (port 1) and GPIO15 (port 2)** — and
+retire the discrete analog-mode LEDs. Each pixel reflects **its own PS2 port**,
+with that port's analog mode folded in as a visual accent.
+
+### Per-port state model (per pixel `p ∈ {0,1}`)
+
+Global states override per-port; priority high→low:
+
+| Priority | State | Source | Look |
+|---|---|---|---|
+| 1 | Error (global) | `err_led_get()` | Red blink (both pixels) |
+| 2 | Pairing (global) | `bt_hci_get_inquiry()` | Blue pulse (both pixels) |
+| 3 | Connected + analog | `bt_host_get_active_dev_from_out_idx(p,&d) >= 0` && `ps_get_analog_led(p)` | Green **steady/bright** |
+| 3 | Connected + digital | connected && !analog | Green **gentle breathe** |
+| 4 | Idle / empty / booting | otherwise | Amber breathe |
+
+The connected **beat-count** encoding from the single-pixel design is dropped
+(meaningless for a single port); analog vs digital is the per-port distinction
+instead.
+
+### Changes vs. the single-pixel design
+
+- **Pins:** two strips on **GPIO12/15** (2 RMT channels; RMT free on PS2). The
+  GPIO4 single pixel is removed. Note 12/15 are ESP32 strapping pins (already
+  driven as outputs today), so a first-frame boot glitch is possible — cosmetic.
+- **`ps_spi.c` (core-1 ISR):** the four `gpio_set_level_iram(...led_pin,…)`
+  calls are replaced by writes to a `static volatile uint8_t ps_analog_led[2]`;
+  a new `uint32_t ps_get_analog_led(uint32_t port)` getter (declared in
+  `ps_spi.h`) exposes it. This *removes* work from the hot path (never adds
+  latency) and hands GPIO12/15 to `led_strip`. The discrete analog-mode LED is
+  retired; its state survives via the getter.
+- **Config:** `BLUERETRO_NEOPIXEL_PIN` (single) becomes
+  `BLUERETRO_NEOPIXEL_P1_PIN` (default 12) and `BLUERETRO_NEOPIXEL_P2_PIN`
+  (default 15). Brightness cap unchanged.
+- **Pure logic:** `neopixel_anim` gains `neo_resolve_port(bool error, bool
+  pairing, bool connected, bool analog)` and a beat-free `neo_render`. Host
+  tests updated.
+
+Elevated risk vs. v1: this is the first change to the PS2 core-1 path and it
+repurposes strapping pins — none of it is compile-verifiable in the dev
+environment, so the CI `idf.py build` on `configs/hw2/playstation` is the hard
+gate before merge.
