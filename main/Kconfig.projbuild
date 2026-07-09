@@ -31,7 +31,7 @@ menu "BlueRetro"
             WS2812 data GPIO for port 2 (reuses the analog-mode LED pin).
 
     config BLUERETRO_NEOPIXEL_MAX_BRIGHTNESS
-        int "NeoPixel max brightness (0-255)"
+        int "NeoPixel max brightness (1-255)"
         depends on BLUERETRO_NEOPIXEL
         range 1 255
         default 64

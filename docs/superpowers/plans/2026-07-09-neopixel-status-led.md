@@ -1,5 +1,11 @@
 # NeoPixel Status Indicator Implementation Plan
 
+> **⚠️ SUPERSEDED** — this is the original *single-pixel* plan (one WS2812 on GPIO4,
+> analog-mode LEDs left intact). The shipped design is the **per-port** revision:
+> two pixels on GPIO12/15 that retire the discrete analog LEDs. Follow
+> [`2026-07-09-neopixel-per-port-revision.md`](2026-07-09-neopixel-per-port-revision.md)
+> and the addendum in the design spec instead. Kept for history.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a single WS2812 ("NeoPixel") as the primary external status light for a PS2-only BlueRetro build, without touching the existing on-board LEDs.

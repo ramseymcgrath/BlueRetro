@@ -8,7 +8,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/* Priority order (highest last): error > pairing > connected > idle. */
+/* Enum values are in ascending order; the resolve priority (highest first) is
+ * the reverse: error > pairing > connected > idle (see neo_resolve_port). */
 enum neo_state {
     NEO_STATE_IDLE = 0,      /* empty port / booting -> amber breathe */
     NEO_STATE_CONN_DIGITAL,  /* connected, digital   -> green breathe */

@@ -14,6 +14,8 @@
 #include "neopixel_anim.h"
 
 #define NEO_FRAME_MS 33 /* ~30 fps */
+/* Always yield at least one tick, even if the tick period > NEO_FRAME_MS. */
+#define NEO_FRAME_TICKS (pdMS_TO_TICKS(NEO_FRAME_MS) > 0 ? pdMS_TO_TICKS(NEO_FRAME_MS) : 1)
 #define NEO_PORT_MAX 2
 
 static led_strip_handle_t neo_strip[NEO_PORT_MAX];
@@ -46,7 +48,7 @@ static void neopixel_task(void *param) {
         }
 
         frame++;
-        vTaskDelay(NEO_FRAME_MS / portTICK_PERIOD_MS);
+        vTaskDelay(NEO_FRAME_TICKS);
     }
 }
 
