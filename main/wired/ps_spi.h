@@ -8,5 +8,6 @@
 
 void ps_spi_init(uint32_t package);
 void ps_spi_port_cfg(uint16_t mask);
+uint32_t ps_get_analog_led(uint32_t port);
 
 #endif /* _PS_SPI_H_ */

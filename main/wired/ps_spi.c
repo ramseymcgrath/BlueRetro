@@ -191,6 +191,8 @@ static struct ps_ctrl_port ps_ctrl_ports[PS_PORT_MAX] = {
     }
 };
 
+static volatile uint8_t ps_analog_led[PS_PORT_MAX];
+
 static inline void load_mouse_axes(uint8_t port, uint8_t *axes) {
     uint8_t *relative = (uint8_t *)(wired_adapter.data[port].output + 2);
     int32_t *raw_axes = (int32_t *)(wired_adapter.data[port].output + 4);
@@ -287,7 +289,7 @@ static void ps_analog_btn_hdlr(struct ps_ctrl_port *port, uint8_t id) {
                     port->dev_id[id] = 0x73;
                     port->dev_desc[id] = 0x3FFFF;
                     if (id == 0) {
-                        gpio_set_level_iram(ps_ctrl_ports[port->mt_first_port ? 1 : 0].led_pin, 1);
+                        ps_analog_led[port->mt_first_port ? 1 : 0] = 1;
                     }
                     fb_data.data[0] = 1;
                 }
@@ -295,7 +297,7 @@ static void ps_analog_btn_hdlr(struct ps_ctrl_port *port, uint8_t id) {
                     port->dev_id[id] = 0x41;
                     port->dev_desc[id] = 0;
                     if (id == 0) {
-                        gpio_set_level_iram(ps_ctrl_ports[port->mt_first_port ? 1 : 0].led_pin, 0);
+                        ps_analog_led[port->mt_first_port ? 1 : 0] = 0;
                     }
                     fb_data.data[0] = 0;
                 }
@@ -359,7 +361,7 @@ static void ps_cmd_req_hdlr(struct ps_ctrl_port *port, uint8_t id, uint8_t cmd, 
                     port->pend_dev_id[id] = 0x73;
                     port->dev_desc[id] = 0x3FFFF;
                     if (id == 0) {
-                        gpio_set_level_iram(ps_ctrl_ports[port->mt_first_port ? 1 : 0].led_pin, 1);
+                        ps_analog_led[port->mt_first_port ? 1 : 0] = 1;
                     }
                     fb_data.data[0] = 1;
                 }
@@ -367,7 +369,7 @@ static void ps_cmd_req_hdlr(struct ps_ctrl_port *port, uint8_t id, uint8_t cmd, 
                     port->pend_dev_id[id] = 0x41;
                     port->dev_desc[id] = 0;
                     if (id == 0) {
-                        gpio_set_level_iram(ps_ctrl_ports[port->mt_first_port ? 1 : 0].led_pin, 0);
+                        ps_analog_led[port->mt_first_port ? 1 : 0] = 0;
                     }
                     fb_data.data[0] = 0;
                 }
@@ -1067,4 +1069,8 @@ void ps_spi_port_cfg(uint16_t mask) {
         }
         mask >>= 1;
     }
+}
+
+uint32_t ps_get_analog_led(uint32_t port) {
+    return (port < PS_PORT_MAX) ? ps_analog_led[port] : 0;
 }
