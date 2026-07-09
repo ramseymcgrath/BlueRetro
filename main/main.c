@@ -93,10 +93,6 @@ static void wl_init_task(void *arg) {
 
     err_led_init(chip_package);
 
-#ifdef CONFIG_BLUERETRO_NEOPIXEL
-    neopixel_init();
-#endif
-
     core0_stall_init();
 
 #ifndef CONFIG_BLUERETRO_QEMU
@@ -129,6 +125,10 @@ static void wl_init_task(void *arg) {
     if (wired_adapter.system_id < WIRED_MAX) {
         wired_rtos_init();
     }
+
+#ifdef CONFIG_BLUERETRO_NEOPIXEL
+    neopixel_init();
+#endif
 
 #ifndef CONFIG_BLUERETRO_QEMU
     mc_init();

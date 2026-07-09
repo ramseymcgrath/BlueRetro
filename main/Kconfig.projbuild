@@ -15,12 +15,19 @@ menu "BlueRetro"
             PS2-only: other cores contend for the RMT peripheral and GPIOs.
             The on-board error LED is unaffected.
 
-    config BLUERETRO_NEOPIXEL_PIN
-        int "NeoPixel data GPIO"
+    config BLUERETRO_NEOPIXEL_P1_PIN
+        int "NeoPixel port 1 data GPIO"
         depends on BLUERETRO_NEOPIXEL
-        default 4
+        default 12
         help
-            Output-capable GPIO that is free on a PS2 build (4, 13, 16, 18 or 23).
+            WS2812 data GPIO for port 1 (reuses the analog-mode LED pin).
+
+    config BLUERETRO_NEOPIXEL_P2_PIN
+        int "NeoPixel port 2 data GPIO"
+        depends on BLUERETRO_NEOPIXEL
+        default 15
+        help
+            WS2812 data GPIO for port 2 (reuses the analog-mode LED pin).
 
     config BLUERETRO_NEOPIXEL_MAX_BRIGHTNESS
         int "NeoPixel max brightness (0-255)"
