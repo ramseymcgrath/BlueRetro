@@ -2,19 +2,19 @@
  * Copyright (c) 2026, Jacques Gagnon
  * SPDX-License-Identifier: Apache-2.0
  */
-
 #ifndef _NEOPIXEL_ANIM_H_
 #define _NEOPIXEL_ANIM_H_
 
 #include <stdint.h>
 #include <stdbool.h>
 
-/* Priority order (highest last): error > pairing > connected > booting. */
+/* Priority order (highest last): error > pairing > connected > idle. */
 enum neo_state {
-    NEO_STATE_BOOTING = 0, /* powered, BT not ready / idle-empty -> amber breathe */
-    NEO_STATE_CONNECTED,   /* >=1 pad connected                  -> green + beats  */
-    NEO_STATE_PAIRING,     /* inquiry / discoverable active      -> blue pulse     */
-    NEO_STATE_ERROR,       /* latched fatal error                -> red blink      */
+    NEO_STATE_IDLE = 0,      /* empty port / booting -> amber breathe */
+    NEO_STATE_CONN_DIGITAL,  /* connected, digital   -> green breathe */
+    NEO_STATE_CONN_ANALOG,   /* connected, analog    -> green steady  */
+    NEO_STATE_PAIRING,       /* inquiry active       -> blue pulse    */
+    NEO_STATE_ERROR,         /* latched error        -> red blink     */
 };
 
 struct neo_rgb {
@@ -23,11 +23,10 @@ struct neo_rgb {
     uint8_t b;
 };
 
-/* Pure: pick the highest-priority active state. */
-enum neo_state neo_resolve_state(bool error, uint32_t inquiry_active, uint32_t conn_cnt);
+/* Pure: resolve one port's state. Global error/pairing override per-port. */
+enum neo_state neo_resolve_port(bool error, bool pairing, bool connected, bool analog);
 
-/* Pure: colour for `state` at animation `frame` (~30 fps). `conn_cnt` sets the
- * connected heartbeat beat count. No channel exceeds `max_bright`. */
-struct neo_rgb neo_render(enum neo_state state, uint32_t conn_cnt, uint32_t frame, uint8_t max_bright);
+/* Pure: colour for `state` at animation `frame` (~30 fps), capped at `max_bright`. */
+struct neo_rgb neo_render(enum neo_state state, uint32_t frame, uint8_t max_bright);
 
 #endif /* _NEOPIXEL_ANIM_H_ */
